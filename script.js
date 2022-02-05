@@ -11,6 +11,8 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+let map,mapEvent
+
 //using Geolocation API
 
 navigator.geolocation.getCurrentPosition(function(position){
@@ -20,7 +22,7 @@ navigator.geolocation.getCurrentPosition(function(position){
     console.log(latitude,longitude);
     console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
      const coords = [latitude,longitude];
-    const map = L.map('map').setView(coords, 13);
+     map = L.map('map').setView(coords, 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -29,8 +31,23 @@ L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 
 
 
-    map.on('click',function(mapEvent){
-        // console.log(mapEvent);
+    map.on('click',function(mapE){
+        mapEvent=mapE;
+        form.classList.remove('hidden');
+
+        inputDistance.focus();
+        
+        
+     
+    })
+},function(){
+    alert("Could Not Get");
+})
+
+form.addEventListener('submit',function(e){
+   // console.log(mapEvent);
+   e.preventDefault();
+   inputCadence.value=inputDistance.value=inputDuration.value=inputElevation.value=' ';
         const {lat,lng} = mapEvent.latlng;
     
 
@@ -44,7 +61,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 
     })).setPopupContent('Workout')
     .openPopup();
-    })
-},function(){
-    alert("Could Not Get");
+})
+
+inputType.addEventListener('change',function(){
+    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
+    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
 })
