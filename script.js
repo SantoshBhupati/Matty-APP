@@ -66,6 +66,9 @@ class App{
     #mapEvent;
     #workouts = [];
     constructor(){
+      //get data From Stroage
+
+      this._getLocalStorage();
         this._getPosition();
         form.addEventListener('submit',this._newWorkout.bind(this));
          inputType.addEventListener('change',this._toggleElevationFiled);
@@ -90,6 +93,10 @@ class App{
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.#map);
             this.#map.on('click',this._showForm.bind(this))  
+
+            this.#workouts.forEach(work =>{
+              this.renderWorkoutMarker(work);
+            });
     }
 
     _showForm(mapE){
@@ -159,6 +166,9 @@ class App{
         //hideform
 
         this._hideForm();
+
+        //LocalStroage
+        this._setLocalStorage();
     }
 
     renderWorkoutMarker(workout){
@@ -232,7 +242,26 @@ class App{
         
       }
 
+      _setLocalStorage(){
+
+       localStorage.setItem('workouts',JSON.stringify(this.#workouts));
       
+      }
+
+      _getLocalStorage(){
+
+        const data = JSON.parse(localStorage.getItem('workouts'));
+        console.log(data);
+        
+        if(!data) return;
+
+        this.#workouts = data;
+
+         this.#workouts.forEach(work =>{
+           this._renderWorkout(work);
+         });
+      }
+
   _hideForm() {
     // Empty inputs
     inputDistance.value = inputDuration.value = inputCadence.value = inputElevation.value =
@@ -258,6 +287,8 @@ class App{
       }
     })
   }
+
+  
 
 }
 
